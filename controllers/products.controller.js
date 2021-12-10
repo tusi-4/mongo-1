@@ -1,25 +1,15 @@
-const express = require('express');
-const router = express.Router();
+const Product = require('../models/product.model');
 
-const ProductController = require('../controllers/products.controller');
-
-router.get('/products', ProductController.getAll);
-router.get('/products/random', ProductController.getRandom);
-router.get('/products/:id', ProductController.getById);
-router.post('/products', ProductController.addNew);
-router.put('/products/:id', ProductController.changeById);
-router.delete('/products/:id', ProductController.removeById);
-
-router.get('/products', async (req, res) => {
+exports.getAll = async (req, res) => {
   try {
     res.json(await Product.find());
   }
   catch(err) {
     res.status(500).json({ message: err });
   }
-});
+}
 
-router.get('/products/random', async (req, res) => {
+exports.getRandom = async (req, res) => {
   try {
     const count = await Product.countDocuments();
     const rand = Math.floor(Math.random() * count);
@@ -30,9 +20,9 @@ router.get('/products/random', async (req, res) => {
   catch(err) {
     res.status(500).json({ message: err });
   }
-});
+}
 
-router.get('/products/:id', async (req, res) => {
+exports.getById = async (req, res) => {
   try {
     const prod = await Product.findById(req.params.id);
     if(!prod) res.status(404).json({ message: 'Not found' });
@@ -41,9 +31,9 @@ router.get('/products/:id', async (req, res) => {
   catch(err) {
     res.status(500).json({ message: err });
   }
-});
+}
 
-router.post('/products', async (req, res) => {
+exports.addNew = async (req, res) => {
   try {
     const { name, client } = req.body;
     const newProduct = new Product({ name: name, client: client });
@@ -53,9 +43,9 @@ router.post('/products', async (req, res) => {
   catch(err) {
     res.status(500).json({ message: err });
   }
-});
+}
 
-router.put('/products/:id', async (req, res) => {
+exports.changeById = async (req, res) => {
   const { name, client } = req.body;
   try {
     const prod = await Product.findById(req.params.id);
@@ -68,9 +58,9 @@ router.put('/products/:id', async (req, res) => {
   catch(err) {
     res.status(500).json({ message: err });
   }
-});
+}
 
-router.delete('/products/:id', async (req, res) => {
+exports.removeById = async (req, res) => {
   try {
     const prod = await Product.findById(req.params.id);
     if(prod) {
@@ -82,6 +72,4 @@ router.delete('/products/:id', async (req, res) => {
   catch(err) {
     res.status(500).json({ message: err });
   }
-});
-
-module.exports = router;
+}
